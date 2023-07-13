@@ -1,9 +1,9 @@
 import React from 'react'
 
-const index = () => {
+function index() {
   return (
     <div>
-      home
+      
     </div>
   )
 }

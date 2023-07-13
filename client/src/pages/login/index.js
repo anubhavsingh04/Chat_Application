@@ -2,7 +2,11 @@ import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { LoginUser } from '../../apicalls/users';
 import {toast} from "react-hot-toast"
+import { HideLoader, ShowLoader } from "../../redux/loaderSlice";
+import { useDispatch } from "react-redux";
+
 function Login(){
+  const dispatch = useDispatch();
   const navigate=useNavigate();
     const [user,setUser]=React.useState({
         email:'',
@@ -10,13 +14,13 @@ function Login(){
     })
     const login=async ()=>{
       try {
-        
+        dispatch(ShowLoader());
         const response = await LoginUser(user);
-       
+        dispatch(HideLoader());
         if (response.success) {
           toast.success(response.message);
           localStorage.setItem("token",response.data);
-          navigate("/");
+          window.location.href = "/";
         } else {
           toast.error(response.message);
         }
