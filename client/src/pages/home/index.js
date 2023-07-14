@@ -2,9 +2,12 @@ import React,{useState} from 'react'
 import ChatArea from './components/ChatArea'
 import UserSearch from './components/UserSearch'
 import UsersList from './components/UsersList'
+import { useSelector } from 'react-redux'
+
 
 function Home() {
   const [searchKey, setSearchKey] = useState("")
+  const {selectedChat}=useSelector((state=>state.userReducer))
   return (
     <div className="flex gap-5">
         {/* 1st part   user search , userslist/chatlist */}
@@ -19,9 +22,9 @@ function Home() {
         </div>
 
         {/* 2nd part chat box */}
-        <div>
+        {selectedChat && (<div className="w-full">
             <ChatArea />
-        </div>
+        </div>)}
     </div>
   )
 }
