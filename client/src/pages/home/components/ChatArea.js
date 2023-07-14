@@ -1,13 +1,38 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { SendMessage } from "../../../apicalls/messages";
+import { HideLoader, ShowLoader } from "../../../redux/loaderSlice";
+import { toast } from "react-hot-toast";
 
 function ChatArea() {
+  const dispatch=useDispatch();
+  const [newMessage,setNewMessage]=React.useState("");
   const { selectedChat,user } = useSelector((state) => state.userReducer);
   const receipentUser=selectedChat.members.find(
     (mem)=>mem._id!==user._id
   );
 
-  
+  const sendNewMessage = async () => {
+      try {
+        dispatch(ShowLoader());
+        const message = {
+          chat: selectedChat._id,
+          sender: user._id,
+          text: newMessage,
+          
+        };
+        const response=await SendMessage(message);
+        dispatch(HideLoader());
+        if(response.success){
+          setNewMessage("");
+        }
+      } 
+      catch (error) {
+        dispatch(HideLoader());
+        toast.error(error.message);
+      }
+    };
+
   return <div className="bg-white h-[82vh] w-full border rounded-xl flex flex-col justify-between p-5">
     {/* 1st part receipent user */}
       <div>
@@ -17,7 +42,7 @@ function ChatArea() {
                     )}
                     
                     {!receipentUser.profilePic && (
-                        <div className="bg-gray-400 rounded-full h-10 w-10 flex items-center justify-center">
+                        <div className="bg-cyan-400 rounded-full h-10 w-10 flex items-center justify-center">
                             <h1 className="text-xl uppercase font-semibold text-black">{receipentUser.name[0]}</h1>
                         </div>
                     )}
@@ -38,9 +63,13 @@ function ChatArea() {
       <div className="h-18 rounded-xl border-gray-300 shadow border flex justify-between p-2 items-center">
         <input type="text" placeholder="Type a message" 
           className="w-[90%] border-0 h-full rounded-xl focus:border-none"
+          value={newMessage}
+          onChange={(e)=>setNewMessage(e.target.value)}
         />
-        <button className="bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4  text-white p-2 rounded h-max">
-            SEND
+        <button className="bg-primary text-white py-1 px-5 rounded h-max"
+          onClick={sendNewMessage}
+        >
+            <i className="ri-send-plane-2-line text-white"></i>
         </button>
       </div>
     </div>

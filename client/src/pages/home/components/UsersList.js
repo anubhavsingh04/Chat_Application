@@ -74,7 +74,7 @@ function UsersList({searchKey}) {
                     
                     {!userObj.profilePic && (
                         <div className="bg-gray-400 rounded-full h-10 w-10 flex items-center justify-center">
-                            <h1 className="text-2xl uppercase font-semibold text-black">{userObj.name[0]}</h1>
+                            <h1 className="text-2xl uppercase font-bold text-black">{userObj.name[0]}</h1>
                         </div>
                     )}
                     <h1>{userObj.name}</h1>
