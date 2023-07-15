@@ -1,12 +1,14 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SendMessage } from "../../../apicalls/messages";
+import { GetMessages, SendMessage } from "../../../apicalls/messages";
 import { HideLoader, ShowLoader } from "../../../redux/loaderSlice";
 import { toast } from "react-hot-toast";
+import moment from "moment"
 
 function ChatArea() {
   const dispatch=useDispatch();
   const [newMessage,setNewMessage]=React.useState("");
+  const [messages=[],setMessages]=React.useState([]);
   const { selectedChat,user } = useSelector((state) => state.userReducer);
   const receipentUser=selectedChat.members.find(
     (mem)=>mem._id!==user._id
@@ -33,6 +35,24 @@ function ChatArea() {
       }
     };
 
+    const getMessages = async () => {
+      try {
+        dispatch(ShowLoader());
+        const response = await GetMessages(selectedChat._id);
+        dispatch(HideLoader());
+        if (response.success) {
+          setMessages(response.data);
+        }
+      } catch (error) {
+        dispatch(HideLoader());
+        toast.error(error.message);
+      }
+    };
+
+    useEffect(() => {
+      getMessages();
+    }, [selectedChat])
+    
   return <div className="bg-white h-[82vh] w-full border rounded-xl flex flex-col justify-between p-5">
     {/* 1st part receipent user */}
       <div>
@@ -53,8 +73,24 @@ function ChatArea() {
 
 
     {/* 2nd part chat message */}
-      <div>
-        chat message
+      <div className="h-[55vh] overflow-y-scroll p-5">
+        <div className="flex flex-col gap-2">
+          {messages.map((message)=>{
+            const isCurrentUserIsSender=message.sender===user._id;
+            return <div className={`flex ${isCurrentUserIsSender && "justify-end"}`}>
+                <div className="flex flex-col gap-1">
+                    <h1
+                      className={`${isCurrentUserIsSender? "bg-primary text-white rounded-bl-none":"bg-gray-300 text-primary rounded-tr-none"} p-2 rounded-xl `}
+                    >
+                      {message.text}
+                    </h1>
+                    <h1 className="text-gray-500 text-sm">
+                      {moment(message.createdAt).format("hh:mm A")}
+                    </h1>
+                </div>
+            </div>
+          })}
+        </div>
       </div>
 
 
