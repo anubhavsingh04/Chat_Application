@@ -4,12 +4,14 @@ import { GetMessages, SendMessage } from "../../../apicalls/messages";
 import { HideLoader, ShowLoader } from "../../../redux/loaderSlice";
 import { toast } from "react-hot-toast";
 import moment from "moment"
+import { ClearChatMessages } from "../../../apicalls/chats";
+import { SetAllChats } from "../../../redux/userSlice";
 
 function ChatArea() {
   const dispatch=useDispatch();
   const [newMessage,setNewMessage]=React.useState("");
   const [messages=[],setMessages]=React.useState([]);
-  const { selectedChat,user } = useSelector((state) => state.userReducer);
+  const { selectedChat,user,allChats } = useSelector((state) => state.userReducer);
   const receipentUser=selectedChat.members.find(
     (mem)=>mem._id!==user._id
   );
@@ -49,8 +51,29 @@ function ChatArea() {
       }
     };
 
+    const clearUnreadMessages = async () => {
+      try {
+        dispatch(ShowLoader());
+        const response = await ClearChatMessages(selectedChat._id);
+        dispatch(HideLoader());
+        if (response.success) {
+          const updatedChats = allChats.map((chat) => {
+            if (chat._id === selectedChat._id) {
+              return response.data;
+            }
+            return chat;
+          });
+          dispatch(SetAllChats(updatedChats));
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
     useEffect(() => {
       getMessages();
+      if (selectedChat?.lastMessage?.sender !== user._id) {
+        clearUnreadMessages();
+      }
     }, [selectedChat])
     
   return <div className="bg-white h-[82vh] w-full border rounded-xl flex flex-col justify-between p-5">
@@ -88,6 +111,10 @@ function ChatArea() {
                       {moment(message.createdAt).format("hh:mm A")}
                     </h1>
                 </div>
+                {isCurrentUserIsSender && (<i class={`ri-check-double-line text-lg p-1
+                  ${message.read ? "text-blue-500" : "text-gray-400"}
+                `}></i>
+          )}
             </div>
           })}
         </div>

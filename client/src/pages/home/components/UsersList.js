@@ -43,10 +43,18 @@ function UsersList({searchKey}) {
       };
 
       const getData = () => {
-        return allUsers.filter( (userObj)=>
-        (userObj.name.toLowerCase().includes(searchKey.toLowerCase()) && searchKey) ||
-        allChats.some((chat)=>chat.members.map((mem)=>mem._id).includes(userObj._id))
-        )
+        // if search key is empty then return all chats else return filtered chats and users
+        try {
+          if (searchKey === "") {
+            return allChats || [];
+          }
+          return allUsers.filter(
+            (user) =>
+              user.name.toLowerCase().includes(searchKey.toLowerCase()) 
+          );
+        } catch (error) {
+          return [];
+        }
       };
 
 	  const getIsSelctedChatOrNot = (userObj) => {
@@ -55,6 +63,7 @@ function UsersList({searchKey}) {
 		}
 		return false;
 	  };
+
       const getLastMsg=(userObj)=>{
         const chat=allChats.find(
             (chat)=>chat.members.map((mem)=>mem._id).includes(userObj._id)
@@ -66,7 +75,7 @@ function UsersList({searchKey}) {
         else 
         {
             const lastMsgPerson=chat?.lastMessage?.sender===user._id ? "You :" : "";
-            return <div className="flex justify-between w-full">
+            return <div className="flex justify-between w-72">
                 <h1 className="text-gray-600 text-sm">
                     {lastMsgPerson}  {chat?.lastMessage?.text}
                 </h1>
@@ -77,10 +86,29 @@ function UsersList({searchKey}) {
         }
       };
 
+      const getUnreadMessages=(userObj)=>{
+        const chat=allChats.find(
+            (chat)=>chat.members.map((mem)=>mem._id).includes(userObj._id)
+        );
+        if(chat && chat?.unreadMessages && chat?.lastMessage?.sender!==user._id){
+            return (
+                <div className="bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {chat?.unreadMessages}
+                </div>
+            )
+        }
+      };
+
   return (
     <div className="flex flex-col gap-3 mt-5 w-96">
-      {getData()
-        .map((userObj)=>{
+      {getData().map((chatObjOrUserObj)=>{
+        let userObj = chatObjOrUserObj;
+
+        if (chatObjOrUserObj.members) {
+          userObj = chatObjOrUserObj.members.find(
+            (mem) => mem._id !== user._id
+          );
+        }
         return (
             <div className={`shadow-sm border p-3 rounded-xl bg-white flex justify-between items-center cursor-pointer w-full
 				${getIsSelctedChatOrNot(userObj) && 'border-primary border-2'}
@@ -88,7 +116,7 @@ function UsersList({searchKey}) {
               key={userObj._id}
               onClick={()=>openChat(userObj._id)}
             >
-               <div className="flex gap-5 items-center w-full">
+               <div className="flex gap-5 items-center ">
                     {userObj.profilePic && (
                         <img src={userObj.profilePic} alt="profilePic" className="w-10 h-10 rounded-full" />
                     )}
@@ -98,8 +126,11 @@ function UsersList({searchKey}) {
                             <h1 className="text-2xl uppercase font-bold text-black">{userObj.name[0]}</h1>
                         </div>
                     )}
-                    <div className="flex flex-col gap-1 w-full">
-                        <h1>{userObj.name}</h1>
+                    <div className="flex flex-col gap-1 ">
+                        <div className="flex gap-1">
+                            <h1>{userObj.name}</h1>
+                            {getUnreadMessages(userObj)}
+                        </div>
                         
                             {getLastMsg(userObj)}
                         

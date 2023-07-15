@@ -45,16 +45,16 @@ function ProtectedRoute({ children }) {
   return (
     <div className="h-screen w-screen bg-gray-100 p-2">
         {/* header */}
-        <div className="flex justify-between p-5">
+        <div className="flex justify-between p-5 bg-cyan-600 rounded">
             
             <div className="flex items-center gap-1">
-              <i class="ri-message-2-line text-2xl"></i>
-              <h1 className="text-primary text-2xl uppercase font-semibold ">CHATLY</h1>
+              <i class="ri-message-2-line text-2xl text-white "></i>
+              <h1 className="text-white text-2xl uppercase font-semibold ">CHATLY</h1>
             </div>
-            <div className="flex gap-1 text-md items-center">
-              <i class="ri-user-3-fill"></i>
-              <h1 className="underline">{user?.name}</h1>
-              <i class="ri-logout-circle-r-line ml-5 text-xl cursor-pointer"
+            <div className="flex gap-1 text-md items-center text-white">
+              <i class="ri-user-3-fill text-white"></i>
+              <h1 className="underline text-white">{user?.name}</h1>
+              <i class="ri-logout-circle-r-line ml-5 text-xl cursor-pointer text-white"
                 onClick={()=>{
                   localStorage.removeItem("token");
                   navigate("/login")
@@ -65,7 +65,7 @@ function ProtectedRoute({ children }) {
           
 
           {/* main */}
-          <div>{children}</div>
+          <div className="py-5">{children}</div>
     </div>
   );
 }
