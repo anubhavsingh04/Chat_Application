@@ -7,7 +7,7 @@ import moment from "moment"
 import { ClearChatMessages } from "../../../apicalls/chats";
 import { SetAllChats } from "../../../redux/userSlice";
 
-function ChatArea() {
+function ChatArea({socket}) {
   const dispatch=useDispatch();
   const [newMessage,setNewMessage]=React.useState("");
   const [messages=[],setMessages]=React.useState([]);
