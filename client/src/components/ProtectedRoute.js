@@ -49,11 +49,25 @@ function ProtectedRoute({ children }) {
             
             <div className="flex items-center gap-1">
               <i class="ri-message-2-line text-2xl text-white "></i>
-              <h1 className="text-white text-2xl uppercase font-semibold ">CHATLY</h1>
+              <h1 className="text-white text-2xl uppercase font-semibold cursor-pointer"
+                onClick={()=>(navigate("/"))}
+              >CHATLY</h1>
             </div>
-            <div className="flex gap-1 text-md items-center text-white">
-              <i class="ri-user-3-fill text-white"></i>
-              <h1 className="underline text-white">{user?.name}</h1>
+            <div className="flex gap-1 text-md items-center text-white cursor-pointer">
+              {user?.profilePic && 
+              <img
+                src={user?.profilePic}
+                alt="profile"
+                className="h-8 w-8 rounded-full object-cover"
+                onClick={()=>{navigate("/profile")}}
+              />
+              }
+              {!user?.profilePic && <i class="ri-user-3-fill text-white"
+                onClick={()=>{navigate("/profile")}}
+               ></i>}
+              <h1 className="underline text-white cursor-pointer"
+                onClick={()=>{navigate("/profile")}}
+              >{user?.name}</h1>
               <i class="ri-logout-circle-r-line ml-5 text-xl cursor-pointer text-white"
                 onClick={()=>{
                   localStorage.removeItem("token");

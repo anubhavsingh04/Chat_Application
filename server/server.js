@@ -8,7 +8,11 @@ const messagesRoute = require("./routes/messagesRoute");
 const port = process.env.PORT || 5000;
 
 const usersRoute = require("./routes/usersRoute");
-app.use(express.json());
+app.use(
+  express.json({
+    limit: "50mb",
+  })
+);
 
 const server = require("http").createServer(app);
 

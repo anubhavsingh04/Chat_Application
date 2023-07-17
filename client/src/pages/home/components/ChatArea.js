@@ -7,8 +7,7 @@ import moment from "moment";
 import { ClearChatMessages } from "../../../apicalls/chats";
 import { SetAllChats } from "../../../redux/userSlice";
 import store from "../../../redux/store";
-import EmojiPicker from 'emoji-picker-react';
-
+import EmojiPicker from "emoji-picker-react";
 
 function ChatArea({ socket }) {
   const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
@@ -23,13 +22,14 @@ function ChatArea({ socket }) {
     (mem) => mem._id !== user._id
   );
 
-  const sendNewMessage = async () => {
+  const sendNewMessage = async (image) => {
     try {
       // dispatch(ShowLoader());
       const message = {
         chat: selectedChat._id,
         sender: user._id,
         text: newMessage,
+        image,
       };
       // send message to server using socket
 
@@ -108,7 +108,6 @@ function ChatArea({ socket }) {
     return result;
   };
 
-
   useEffect(() => {
     getMessages();
     if (selectedChat?.lastMessage?.sender !== user._id) {
@@ -177,6 +176,14 @@ function ChatArea({ socket }) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight - 100;
   }, [messages, isReceipentTyping]);
 
+  const onUploadImageClick = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader(file);
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      sendNewMessage(reader.result);
+    };
+  };
   return (
     <div className="bg-white h-[82vh] w-full border rounded-xl flex flex-col justify-between p-5">
       {/* 1st part receipent user */}
@@ -213,7 +220,7 @@ function ChatArea({ socket }) {
                   className={`flex ${isCurrentUserIsSender && "justify-end"}`}
                 >
                   <div className="flex flex-col gap-1">
-                    <h1
+                    {message.text && <h1
                       className={`${
                         isCurrentUserIsSender
                           ? "bg-primary text-white rounded-bl-none"
@@ -222,6 +229,16 @@ function ChatArea({ socket }) {
                     >
                       {message.text}
                     </h1>
+                    }
+
+                    {message.image && (
+                    <img
+                      src={message.image}
+                      alt="message image"
+                      className="w-24 h-24 rounded-xl"
+                    />
+                  )}
+
                     <h1 className="text-gray-500 text-sm">
                       {/* {moment(message.createdAt).format("hh:mm A")} */}
                       {getDateInRegualarFormat(message.createdAt)}
@@ -250,7 +267,7 @@ function ChatArea({ socket }) {
 
       {/* 3rd part chat input  */}
       {/* <div> */}
-        <div className="h-18 rounded-xl border-gray-300 shadow border flex justify-between p-2 items-center relative">
+      <div className="h-18 rounded-xl border-gray-300 shadow border flex justify-between p-2 items-center relative">
         {showEmojiPicker && (
           <div className="absolute -top-96 left-0">
             <EmojiPicker
@@ -261,31 +278,46 @@ function ChatArea({ socket }) {
             />
           </div>
         )}
-        <i class="ri-emotion-line cursor-pointer"
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-        ></i>
-          <input
-            type="text"
-            placeholder="Type a message"
-            className="w-[90%] border-0 h-full rounded-xl focus:border-none"
-            value={newMessage}
-            onChange={(e) => {
-              setNewMessage(e.target.value);
-              socket.emit("typing", {
-                chat: selectedChat._id,
-                members: selectedChat.members.map((mem) => mem._id),
-                sender: user._id,
-              });
-            }}
-          />
-          <button
-            className="bg-primary text-white py-1 px-5 rounded h-max"
-            onClick={sendNewMessage}
-          >
-            <i className="ri-send-plane-2-line text-white"></i>
-          </button>
+        <div className="flex gap-2 text-xl">
+          <label for="file">
+            <i class="ri-link cursor-pointer text-xl" typeof="file"></i>
+            <input
+              type="file"
+              id="file"
+              style={{
+                display: "none",
+              }}
+              accept="image/gif,image/jpeg,image/jpg,image/png"
+              onChange={onUploadImageClick}
+            />
+          </label>
+          <i
+            class="ri-emotion-line cursor-pointer text-xl"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          ></i>
         </div>
+        <input
+          type="text"
+          placeholder="Type a message"
+          className="w-[90%] border-0 h-full rounded-xl focus:border-none"
+          value={newMessage}
+          onChange={(e) => {
+            setNewMessage(e.target.value);
+            socket.emit("typing", {
+              chat: selectedChat._id,
+              members: selectedChat.members.map((mem) => mem._id),
+              sender: user._id,
+            });
+          }}
+        />
+        <button
+          className="bg-primary text-white py-1 px-5 rounded h-max"
+          onClick={()=>{sendNewMessage('')}}
+        >
+          <i className="ri-send-plane-2-line text-white"></i>
+        </button>
       </div>
+    </div>
     // </div>
   );
 }
