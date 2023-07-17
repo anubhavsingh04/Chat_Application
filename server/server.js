@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
   });
 
   // send message to clients (who are present in members array)
-  socket.on("send-message", (message) => {
+  socket.once("send-message", (message) => {
     io.to(message.members[0])
       .to(message.members[1])
       .emit("receive-message", message);
@@ -58,10 +58,11 @@ io.on("connection", (socket) => {
 		io.emit("online-users-updated", onlineUsers);
 	  });
 	
-	//   socket.on("went-offline", (userId) => {
-	// 	onlineUsers = onlineUsers.filter((user) => user !== userId);
-	// 	io.emit("online-users-updated", onlineUsers);
-	//   });
+	  socket.on("went-offline", (userId) => {
+		onlineUsers = onlineUsers.filter((user) => user !== userId);
+    // console.log(onlineUsers);
+		io.emit("online-users-updated", onlineUsers);
+	  });
 });
 
 

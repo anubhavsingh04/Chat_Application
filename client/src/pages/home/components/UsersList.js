@@ -7,7 +7,7 @@ import { SetAllChats, SetSelectedChat } from "../../../redux/userSlice";
 import moment from "moment";
 import store from "../../../redux/store";
 
-function UsersList({ searchKey, socket ,onlineUsers}) {
+function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
   const { allUsers, allChats, user, selectedChat } = useSelector(
     (state) => state.userReducer
   );
@@ -24,6 +24,7 @@ function UsersList({ searchKey, socket ,onlineUsers}) {
         const updatedChats = [...allChats, newChat];
         dispatch(SetAllChats(updatedChats));
         dispatch(SetSelectedChat(newChat));
+        setSearchKey("");
       } else {
         toast.error(response.message);
       }
@@ -165,7 +166,7 @@ function UsersList({ searchKey, socket ,onlineUsers}) {
         }
         return (
           <div
-            className={`shadow-sm border p-3 rounded-xl bg-white flex justify-between items-center cursor-pointer w-full
+            className={`shadow-sm border p-2 rounded-xl bg-white flex justify-between items-center cursor-pointer w-full
 				${getIsSelctedChatOrNot(userObj) && "border-primary border-2"}
             `}
             key={userObj._id}
@@ -185,16 +186,20 @@ function UsersList({ searchKey, socket ,onlineUsers}) {
                   <h1 className="text-2xl uppercase font-bold text-black">
                     {userObj.name[0]}
                   </h1>
-                  {onlineUsers.includes(userObj._id) && (
-                      <div>
-                        <div className="bg-green-700 h-2 w-2 rounded-full absolute bottom-[2px] right-1"></div>
-                      </div>
-                    )}
+                  
                 </div>
               )}
               <div className="flex flex-col gap-1 ">
                 <div className="flex gap-1">
-                  <h1>{userObj.name}</h1>
+                    <div className="flex gap-1 items-center">
+                    <h1>{userObj.name}</h1>
+                    {onlineUsers.includes(userObj._id) && (
+                      <div>
+                        <div className="bg-green-700 h-3 w-3 rounded-full"></div>
+                      </div>
+                    )}
+                  </div>
+
                   {getUnreadMessages(userObj)}
                 </div>
 

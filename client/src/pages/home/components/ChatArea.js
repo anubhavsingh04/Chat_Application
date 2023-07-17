@@ -209,49 +209,54 @@ function ChatArea({ socket }) {
         <hr />
       </div>
 
-      {/* 2nd part chat message */}
+      {/* 2nd part chat messages */}
       <div className="h-[55vh] overflow-y-scroll p-5" id="messages">
         <div className="flex flex-col gap-2">
-          {messages.map((message) => {
+          {messages.map((message, index) => {
             const isCurrentUserIsSender = message.sender === user._id;
             return (
-              <div>
-                <div
-                  className={`flex ${isCurrentUserIsSender && "justify-end"}`}
-                >
-                  <div className="flex flex-col gap-1">
-                    {message.text && <h1
+              <div className={`flex ${isCurrentUserIsSender && "justify-end"}`}>
+                <div className="flex flex-col gap-1">
+                  {message.text && (
+                    <h1
                       className={`${
                         isCurrentUserIsSender
                           ? "bg-primary text-white rounded-bl-none"
                           : "bg-gray-300 text-primary rounded-tr-none"
-                      } p-2 rounded-xl `}
+                      } p-2 rounded-xl`}
                     >
                       {message.text}
                     </h1>
-                    }
-
-                    {message.image && (
+                  )}
+                  {message.image && (
                     <img
                       src={message.image}
                       alt="message image"
                       className="w-24 h-24 rounded-xl"
                     />
                   )}
-
-                    <h1 className="text-gray-500 text-sm">
-                      {/* {moment(message.createdAt).format("hh:mm A")} */}
-                      {getDateInRegualarFormat(message.createdAt)}
-                    </h1>
-                  </div>
-                  {isCurrentUserIsSender && (
-                    <i
-                      class={`ri-check-double-line text-lg p-1
-                  ${message.read ? "text-blue-500" : "text-gray-400"}
-                `}
-                    ></i>
-                  )}
+                  <h1 className="text-gray-500 text-sm">
+                    {getDateInRegualarFormat(message.createdAt)}
+                  </h1>
                 </div>
+                {isCurrentUserIsSender && message.read && (
+                  <div className="p-2">
+                    {receipentUser.profilePic && (
+                      <img
+                        src={receipentUser.profilePic}
+                        alt="profile pic"
+                        className="w-4 h-4 rounded-full"
+                      />
+                    )}
+                    {!receipentUser.profilePic && (
+                      <div className="bg-gray-400 rounded-full h-4 w-4 flex items-center justify-center relative">
+                        <h1 className="uppercase text-sm font-semibold text-white">
+                          {receipentUser.name[0]}
+                        </h1>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}

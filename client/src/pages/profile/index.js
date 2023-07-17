@@ -44,37 +44,41 @@ function Profile() {
         }
       };
   return (
-    user && <div  className="text-xl font-semibold text-gray-500 flex flex-col gap-2">
-        <h1>{user?.name}</h1>
-          <h1>{user?.email}</h1>
-          <h1>
-            Created At:{" "}
-            {moment(user?.createdAt).format("Do MMMM YYYY, h:mm:ss a")}
-          </h1>
-          {image && (
-            <img
-              src={image}
-              alt="profile pic"
-              className="w-32 h-32 rounded-full"
-            />
-          )}
+    user && <div className="flex h-[80vh] items-center justify-center">
+      <div  
+      className="text-xl font-semibold text-gray-500 flex flex-col gap-2 p-2 shadow-md border w-max border-gray-300 rounded">
+          <h1>{user?.name}</h1>
+          <h1> {user?.email}</h1>
+            <h1>
+              Created At:{" "}
+              {moment(user?.createdAt).format("Do MMMM YYYY, h:mm:ss a")}
+            </h1>
+            {image && (
+              <img
+                src={image}
+                alt="profile pic"
+                className="w-32 h-32 rounded-full"
+              />
+            )}
 
-          <div className="flex gap-2">
-            <label htmlFor="file-input" className="cursor-pointer">
-              Update Profile Pic
-            </label>
-            <input
-              type="file"
-              onChange={onFileSelect}
-              className="file-input border-0"
-              id="file-input"
-            />
-            <button className="contained-btn" onClick={updateProfilePic}>
-              Update
-            </button>
-          </div>
+            <div className="flex gap-2">
+              <label htmlFor="file-input" className="cursor-pointer">
+                Update Profile Picture
+              </label>
+              <input
+                type="file"
+                onChange={onFileSelect}
+                className="file-input border-0"
+                id="file-input"
+              />
+              <button className="contained-btn rounded" onClick={updateProfilePic}>
+                Update
+              </button>
+            </div>
 
+      </div>
     </div>
+
   )
 }
 

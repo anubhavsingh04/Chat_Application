@@ -37,16 +37,21 @@ function Register(){
   return (
     <div className=" h-screen bg-primary flex items-center justify-center">
       <div className="bg-white shadow-md p-5 flex flex-col gap-5 w-96 rounded">
-        <h1 className="text-2xl  uppercase font font-semibold text-primary">Chatly Register{" "}</h1>
+          <div className="flex gap-2">
+            <i className="ri-question-answer-line text-primary text-2xl "></i>
+            <h1 className="text-2xl  uppercase font-semibold text-primary " id="chatly-register">Chatly Register</h1>
+          </div>
         <hr />
         <h1 className=" font-semibold ">Name</h1>
         <input className="rounded" type='text'
+            required
             value={user.name}
             onChange={(e)=>setUser({...user,name:e.target.value})}
             placeholder='Enter Your Name'
          />
          <h1 className=" font-semibold ">Email</h1>
-        <input className="rounded" type='text'
+        <input className="rounded" type="email"
+            required
             value={user.email}
             onChange={(e)=>setUser({...user,email:e.target.value})}
             placeholder='Enter Your Email'
@@ -54,10 +59,13 @@ function Register(){
          <h1 className=" font-semibold ">Password</h1>
         <input className="rounded" type="password"
             value={user.password}
+            required
             onChange={(e)=>setUser({...user,password:e.target.value})}
             placeholder='Enter Your Password'
          />
-         <button className="contained-btn rounded-md" onClick={register}>Register</button>
+         <button className={
+            user.email && user.password && user.name ? "contained-btn rounded-md " : "disabled-btn rounded-md" 
+          } onClick={register}>Register</button>
          <Link to="/login" className='underline'>
             Already have an account? Login
          </Link>
