@@ -6,8 +6,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
-const socket = io("https://chatly.onrender.com");
-localStorage.setItem("socket",socket);
+const socket = io('https://chatly.onrender.com');
+// localStorage.setItem("socket",socket);
 
 function Home() {
   const [searchKey, setSearchKey] = useState("");

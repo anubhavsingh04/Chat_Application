@@ -1,9 +1,9 @@
 {
-  "name": "sheychat",
+  "name": "chatly",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-    "engines": {
+  "engines": {
     "node": "15.7.0",
     "npm": "6.13.4"
   },

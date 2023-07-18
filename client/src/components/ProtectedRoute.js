@@ -7,9 +7,9 @@ import { HideLoader, ShowLoader } from "../redux/loaderSlice";
 import { SetUser, SetAllChats, SetAllUsers } from "../redux/userSlice";
 import { GetAllChats } from "../apicalls/chats";
 
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
+// const socket = io("http://localhost:5000");
 
 function ProtectedRoute({ children }) {
   const dispatch = useDispatch();
@@ -88,7 +88,7 @@ function ProtectedRoute({ children }) {
           <i
             class="ri-logout-circle-r-line ml-2 text-xl cursor-pointer text-primary"
             onClick={() => {
-              socket.emit("went-offline",user._id);
+              // socket.emit("went-offline",user._id);
               localStorage.removeItem("token");
               navigate("/login");
             }}
