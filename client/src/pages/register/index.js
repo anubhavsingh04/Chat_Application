@@ -15,6 +15,15 @@ function Register(){
     })
 
     const register = async () => {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if(!emailPattern.test(user.email)) {
+        toast.error("Entered Email is Invalid");
+        return ;
+      }
+      if(user.password.length<4){
+        toast.error("Password must be greater than 4 character");
+        return ;
+      }
       try {
         dispatch(ShowLoader());
         const response = await RegisterUser(user);
@@ -43,21 +52,33 @@ function Register(){
           </div>
         <hr />
         <h1 className=" font-semibold ">Name</h1>
-        <input className="rounded" type='text'
-            required
-            value={user.name}
-            onChange={(e)=>setUser({...user,name:e.target.value})}
-            placeholder='Enter Your Name'
-         />
+        <input
+          className="rounded"
+          type="text"
+          required
+          value={user.name}
+          onChange={(e) => {
+            const inputText = e.target.value;
+            if (/^[a-zA-Z\s]*$/.test(inputText) || inputText === "") {
+              setUser({ ...user, name: inputText });
+            }
+          }}
+          placeholder="Enter Your Name"
+        />
+
          <h1 className=" font-semibold ">Email</h1>
-        <input className="rounded" type="email"
-            required
-            value={user.email}
-            onChange={(e)=>setUser({...user,email:e.target.value})}
-            placeholder='Enter Your Email'
-         />
+         <input
+          className="rounded"
+          type="email"
+          required
+          value={user.email}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
+          placeholder="Enter Your Email"
+        />
+
          <h1 className=" font-semibold ">Password</h1>
-        <input className="rounded" type="password"
+        <input className="rounded" 
+            type="password"
             value={user.password}
             required
             onChange={(e)=>setUser({...user,password:e.target.value})}

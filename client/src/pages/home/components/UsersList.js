@@ -7,7 +7,7 @@ import { SetAllChats, SetSelectedChat } from "../../../redux/userSlice";
 import moment from "moment";
 import store from "../../../redux/store";
 
-function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
+function UsersList({ searchKey, socket ,onlineUsers}) {
   const { allUsers, allChats, user, selectedChat } = useSelector(
     (state) => state.userReducer
   );
@@ -24,7 +24,6 @@ function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
         const updatedChats = [...allChats, newChat];
         dispatch(SetAllChats(updatedChats));
         dispatch(SetSelectedChat(newChat));
-        setSearchKey("");
       } else {
         toast.error(response.message);
       }
@@ -61,7 +60,7 @@ function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
 
   const getIsSelctedChatOrNot = (userObj) => {
     if (selectedChat) {
-      return selectedChat.members.map((mem) => mem._id).includes(userObj._id);
+      return selectedChat.members.map((mem) => mem._id).includes(userObj?._id);
     }
     return false;
   };
@@ -87,7 +86,7 @@ function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
 
   const getLastMsg = (userObj) => {
     const chat = allChats.find((chat) =>
-      chat.members.map((mem) => mem._id).includes(userObj._id)
+      chat.members.map((mem) => mem._id).includes(userObj?._id)
     );
     if (!chat || !chat.lastMessage) {
       return "";
@@ -109,7 +108,7 @@ function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
 
   const getUnreadMessages = (userObj) => {
     const chat = allChats.find((chat) =>
-      chat.members.map((mem) => mem._id).includes(userObj._id)
+      chat.members.map((mem) => mem._id).includes(userObj?._id)
     );
     if (
       chat &&
@@ -158,7 +157,7 @@ function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
     <div className="flex flex-col gap-3 mt-5 lg:w-96 xl:w-96 md:w-60 sm:w-60">
       {getData().map((chatObjOrUserObj) => {
         let userObj = chatObjOrUserObj;
-
+        console.log(userObj);
         if (chatObjOrUserObj.members) {
           userObj = chatObjOrUserObj.members.find(
             (mem) => mem._id !== user._id
@@ -166,14 +165,15 @@ function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
         }
         return (
           <div
-            className={`shadow-sm border p-2 rounded-xl bg-white flex justify-between items-center cursor-pointer w-full
-				${getIsSelctedChatOrNot(userObj) && "border-primary border-2"}
+            className={`shadow-sm border p-3 rounded-xl bg-white flex justify-between items-center cursor-pointer w-full
+				           ${getIsSelctedChatOrNot(userObj) && "border-primary border-2"}
             `}
-            key={userObj._id}
-            onClick={() => openChat(userObj._id)}
+            key={userObj?._id}
+            onClick={() => openChat(userObj?._id)}
           >
+            
             <div className="flex gap-5 items-center ">
-              {userObj.profilePic && (
+              {userObj && userObj.profilePic && (
                 <img
                   src={userObj.profilePic}
                   alt="profilePic"
@@ -181,34 +181,30 @@ function UsersList({ searchKey,setSearchKey, socket ,onlineUsers}) {
                 />
               )}
 
-              {!userObj.profilePic && (
+              {userObj && !userObj.profilePic && (
                 <div className="bg-slate-300 rounded-full h-10 w-10 flex items-center justify-center relative">
                   <h1 className="text-2xl uppercase font-bold text-black">
-                    {userObj.name[0]}
+                    {userObj?.name[0]}
                   </h1>
-                  
+                  {onlineUsers.includes(userObj?._id) && (
+                      <div>
+                        <div className="bg-green-700 h-2 w-2 rounded-full absolute bottom-[2px] right-1"></div>
+                      </div>
+                    )}
                 </div>
               )}
               <div className="flex flex-col gap-1 ">
                 <div className="flex gap-1">
-                    <div className="flex gap-1 items-center">
-                    <h1>{userObj.name}</h1>
-                    {onlineUsers.includes(userObj._id) && (
-                      <div>
-                        <div className="bg-green-700 h-3 w-3 rounded-full"></div>
-                      </div>
-                    )}
-                  </div>
-
+                  <h1>{userObj?.name}</h1>
                   {getUnreadMessages(userObj)}
                 </div>
 
                 {getLastMsg(userObj)}
               </div>
             </div>
-            <div onClick={() => createNewChat(userObj._id)}>
+            <div onClick={() => createNewChat(userObj?._id)}>
               {!allChats.find((chat) =>
-                chat.members.map((mem) => mem._id).includes(userObj._id)
+                chat.members.map((mem) => mem._id).includes(userObj?._id)
               ) && (
                 <button className="border-primary border text-primary bg-white p-1 rounded">
                   Create Chat

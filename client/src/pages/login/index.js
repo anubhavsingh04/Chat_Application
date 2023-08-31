@@ -13,6 +13,15 @@ function Login(){
         password:'',
     })
     const login=async ()=>{
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if(!emailPattern.test(user.email)) {
+        toast.error("Entered Email is Invalid");
+        return ;
+      }
+      if(user.password.length<4){
+        toast.error("Password must be greater than 4 character");
+        return ;
+      }
       try {
         dispatch(ShowLoader());
         const response = await LoginUser(user);
